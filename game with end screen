@@ -1,0 +1,337 @@
+var currentScene = 0;
+var numAliensRow = 5;
+var numAliensColumn = 1;
+var aliensArray = [];
+var playerLasersArray = [];
+var alienLasersArray = [];
+var lives = 3;
+var score = 0;
+var playerX = 160;
+var startTime = 0;
+var Bitmoji = function(bodyX, bodyY, height) {
+    this.bodyX = bodyX;
+    this.bodyY = bodyY;
+    this.height = height;
+};
+Bitmoji.prototype.draw = function() {
+    this.bodyY = constrain(this.bodyY, 25, height-35);
+    stroke(135, 64, 23);
+    strokeWeight(2);
+    fill(255, 226, 198);
+    ellipse(this.bodyX + (this.height / 150 * 1), this.bodyY + (this.height / 150 * 1), this.height / 150 * 78, this.height / 150 * 100); //head
+    noStroke();
+    fill(135, 64, 23);
+    quad(this.bodyX + (this.height / 150 * 32), this.bodyY - (this.height / 150 * 53), this.bodyX - (this.height / 150 * 33), this.bodyY - (this.height / 150 * 54), this.bodyX - (this.height / 150 * 41), this.bodyY - (this.height / 150 * 23), this.bodyX + (this.height / 150 * 43), this.bodyY - (this.height / 150 * 23));//hair
+    quad(this.bodyX - (this.height / 150 * 46), this.bodyY - (this.height / 150 * 19), this.bodyX - (this.height / 150 * 44), this.bodyY + (this.height / 150 * 16), this.bodyX - (this.height / 150 * 22), this.bodyY - (this.height / 150 * 1), this.bodyX - (this.height / 150 * 22), this.bodyY - (this.height / 150 * 56));
+    quad(this.bodyX + (this.height / 150 * 45), this.bodyY + (this.height / 150 * 13), this.bodyX + (this.height / 150 * 44), this.bodyY - (this.height / 150 * 32), this.bodyX + (this.height / 150 * 20), this.bodyY - (this.height / 150 * 51), this.bodyX + (this.height / 150 * 23), this.bodyY - (this.height / 150 * 2));
+    quad(this.bodyX + (this.height / 150 * 23), this.bodyY + (this.height / 150 * 24), this.bodyX + (this.height / 150 * 19), this.bodyY + (this.height / 150 * 16), this.bodyX - (this.height / 150 * 19), this.bodyY + (this.height / 150 * 15), this.bodyX - (this.height / 150 * 23), this.bodyY + (this.height / 150 * 24));
+    quad(this.bodyX - (this.height / 150 * 14), this.bodyY + (this.height / 150 * 49), this.bodyX - (this.height / 150 * 16), this.bodyY + (this.height / 150 * 28), this.bodyX + (this.height / 150 * 17), this.bodyY + (this.height / 150 * 26), this.bodyX + (this.height / 150 * 18), this.bodyY + (this.height / 150 * 49));
+    fill(255, 255, 255);
+    ellipse(this.bodyX - (this.height / 150 * 12), this.bodyY - (this.height / 150 * 5), this.height / 150 * 15, this.height / 150 * 15); //white of the eyes
+    ellipse(this.bodyX + (this.height / 150 * 12), this.bodyY - (this.height / 150 * 5), this.height / 150 * 15, this.height / 150 * 15);
+    fill(55, 141, 212);
+    ellipse(this.bodyX - (this.height / 150 * 12), this.bodyY - (this.height / 150 * 5), this.height / 150 * 7, this.height / 150 * 7); //eyes
+    ellipse(this.bodyX + (this.height / 150 * 12), this.bodyY - (this.height / 150 * 5), this.height / 150 * 7, this.height / 150 * 7);
+    stroke(0, 0, 0);
+    fill(255, 226, 198);
+    bezier(this.bodyX + (this.height / 150 * 1), this.bodyY - (this.height / 150 * 1), this.bodyX + (this.height / 150 * 19), this.bodyY + (this.height / 150 * 20), this.bodyX - (this.height / 150 * 8), this.bodyY + (this.height / 150 * 20), this.bodyX - (this.height / 150 * 4), this.bodyY + (this.height / 150 * 16)); //nose
+    fill(255, 255, 255);
+    arc(this.bodyX + (this.height / 150 * 1), this.bodyY + (this.height / 150 * 25), this.height / 150 * 35, this.height / 150 * 20, 0, 180); //smile
+    line(this.bodyX - (this.height / 150 * 17), this.bodyY + (this.height / 150 * 24), this.bodyX + (this.height / 150 * 17), this.bodyY + (this.height / 150 * 24));
+    fill(54, 76, 201); //hat
+    stroke(0, 0, 0);
+    strokeWeight(2);
+    arc(this.bodyX + (this.height / 150 * 1), this.bodyY - (this.height / 150 * 36), this.height / 150 * 85, this.height / 150 * 66, 180, 360);
+    line(this.bodyX + (this.height / 150 * 43), this.bodyY - (this.height / 150 * 36), this.bodyX - (this.height / 150 * 42), this.bodyY - (this.height / 150 * 36));
+    arc(this.bodyX + (this.height / 150 * 1), this.bodyY - (this.height / 150 * 36), this.height / 150 * 85, this.height / 150 * 20, 180, 360);
+    fill(126, 54, 214);
+    quad(this.bodyX - (this.height / 150 * 61), this.bodyY + (this.height / 150 * 80), this.bodyX - (this.height / 150 * 40), this.bodyY + (this.height / 150 * 45), this.bodyX + (this.height / 150 * 48), this.bodyY + (this.height / 150 * 45), this.bodyX + (this.height / 150 * 71), this.bodyY + (this.height / 150 * 80)); //shirt
+    strokeWeight(4);
+    stroke(255, 255, 255);
+    line(this.bodyX - (this.height / 150 * 32), this.bodyY + (this.height / 150 * 52), this.bodyX - (this.height / 150 * 2), this.bodyY + (this.height / 150 * 52));
+    line(this.bodyX - (this.height / 150 * 15), this.bodyY + (this.height / 150 * 72), this.bodyX - (this.height / 150 * 15), this.bodyY + (this.height / 150 * 52));
+    line(this.bodyX + (this.height / 150 * 17), this.bodyY + (this.height / 150 * 73), this.bodyX + (this.height / 150 * 17), this.bodyY + (this.height / 150 * 52));
+    line(this.bodyX + (this.height / 150 * 17), this.bodyY + (this.height / 150 * 51), this.bodyX + (this.height / 150 * 29), this.bodyY + (this.height / 150 * 51));
+    line(this.bodyX + (this.height / 150 * 28), this.bodyY + (this.height / 150 * 64), this.bodyX + (this.height / 150 * 19), this.bodyY + (this.height / 150 * 64));
+};
+
+
+//draw head
+var drawBitmojiHead = function(bitmojiX, bitmojiY, bitmojiH)
+{
+    var p = bitmojiH/150;
+    noStroke();
+    fill(255, 242, 232);
+    ellipse(bitmojiX+p,bitmojiY+p,p*70,p*100); //face
+    fill(136, 126, 242);
+    ellipse(bitmojiX+p*-13,bitmojiY+p*-4,p*15,p*10); //left eye
+    ellipse(bitmojiX+p*13,bitmojiY+p*-4,p*15,p*10); //right eye
+    fill(3, 3, 3);
+    ellipse(bitmojiX+p*-13,bitmojiY+p*-4,p*5,p*5); //left puple
+    ellipse(bitmojiX+p*13,bitmojiY+p*-4,p*5,p*5); //right puple
+    fill(255, 0, 0);
+    arc(bitmojiX+p*1,bitmojiY+p*23,p*24,p*27,0,180); //mouth
+    fill(255, 255, 255);
+    rect(bitmojiX+p*-5,bitmojiY+p*22.5,p*5,p*5); //left tooth
+    rect(bitmojiX+p*3,bitmojiY+p*22.5,p*5,p*5); //right tooth
+    fill(37, 7, 125);
+    arc(bitmojiX+p*1,bitmojiY+p*-28,p*59,p*42,-180,0); //hat
+    fill(255, 242, 232);
+    rect(bitmojiX+p*-8,bitmojiY+p*-38,p*18,p*8); //hat gap
+    fill(59, 53, 28);
+    quad(bitmojiX+p*-13,bitmojiY+p*-28,bitmojiX+p*-28,bitmojiY+p*-28,bitmojiX+p*-33,bitmojiY+p*-3,bitmojiX+p*-22,bitmojiY+p*-12); //left hair
+    quad(bitmojiX+p*30,bitmojiY+p*-28,bitmojiX+p*11,bitmojiY+p*-28,bitmojiX+p*29,bitmojiY+p*-7,bitmojiX+p*36,bitmojiY+p*-1); //right hair
+    stroke(3, 3, 3);
+    noFill();
+    bezier(bitmojiX+p*1,bitmojiY+p*0,bitmojiX+p*14,bitmojiY+p*12,bitmojiX+p*11,bitmojiY+p*17,bitmojiX+p-2,bitmojiY+p*17); //nose  
+    
+};
+//draw shirt
+var drawBitmojiShirt = function(bitmojiX, bitmojiY, bitmojiH, bitmojiShirtColor, bitmojiInitials)
+{
+    var p = bitmojiH/150;
+    noStroke();
+    fill(bitmojiShirtColor);
+    quad(bitmojiX+p*50,bitmojiY+p*45,bitmojiX+p*-50,bitmojiY+p*45,bitmojiX+p*-20,bitmojiY+p*90,bitmojiX+p*20,bitmojiY+p*90); //Shirt
+    fill(255,255,255);
+    textSize(p*30);
+    if (bitmojiInitials){ //if statement for initials
+    text("KH",bitmojiX+p,bitmojiY+p*77); //KH  
+    }
+};
+
+var drawBitmoji = function(bitmojiObject)
+{
+    var bitmojiX = bitmojiObject.x;
+    var bitmojiY = bitmojiObject.y;
+    var bitmojiH = bitmojiObject.h;
+    var bitmojiShirtColor = bitmojiObject.shirtColor;
+    var bitmojiInitials = bitmojiObject.initials;
+    drawBitmojiHead(bitmojiX,bitmojiY,bitmojiH);
+    drawBitmojiShirt(bitmojiX,bitmojiY,bitmojiH,bitmojiShirtColor, bitmojiInitials);
+};
+
+var timBitmoji = new Bitmoji(57,208,100);
+
+var Button = function(config) {
+    this.x = config.x || 0;
+    this.y = config.y || 0;
+    this.width = config.width || 150;
+    this.height = config.height || 50;
+    this.label = config.label || "Click";
+    this.onClick = config.onClick || function() {};
+};
+
+Button.prototype.draw = function() {
+    fill(0, 234, 255);
+    rect(this.x, this.y, this.width, this.height, 5);
+    fill(0, 0, 0);
+    textSize(19);
+    textAlign(LEFT, TOP);
+    text(this.label, this.x+10, this.y+this.height/4);
+};
+
+Button.prototype.isMouseInside = function() {
+    return mouseX > this.x &&
+           mouseX < (this.x + this.width) &&
+           mouseY > this.y &&
+           mouseY < (this.y + this.height);
+};
+
+Button.prototype.handleMouseClick = function() {
+    if (this.isMouseInside()) {
+        this.onClick();
+    }
+};
+
+var btn1 = new Button({
+    x: 149,
+    y: 343,
+    width: 100,
+    label: "Start",
+    onClick: function() {
+        currentScene = 1;
+    }
+});
+
+
+
+mouseClicked = function() {
+    btn1.handleMouseClick();
+    startTime = millis();
+};
+
+var splashScreen = function(){
+    background(240, 127, 152);
+    timBitmoji.draw();
+    drawBitmoji({	
+        x:338,
+        y:200,
+        h:100,
+        shirtColor:color(77, 68, 235),
+        initials: true
+    });
+    btn1.draw();
+    fill(5, 5, 5);
+    textSize(40);
+    text("Space Invaders", 66,14);
+    textSize(25);
+    text("By: Tim and Karol", 104,62);
+    textSize(15);
+    textAlign(CENTER);
+    text("Instructions: use arrow keys to move left and right.\n Press space key to shoot.", 195,123);
+};
+
+var endScreen = function(){
+    background(0, 0, 0);
+    fill(255, 0, 0);
+    textSize(40);
+    text("GAMEOVER",197, 51);
+    fill(255, 255, 255);
+    textSize(30);
+    text("Your score is: " + score, 197,132);
+};
+
+var Alien = function(x,y){ //alien object
+    this.x = x;
+    this.y = y;
+    this.tic = 1;
+    this.image = getImage("avatars/mr-pink");
+    this.alive = true;
+    this.size = 50;
+};
+
+Alien.prototype.draw = function() {
+    if(this.alive === true){
+        image(this.image, this.x, this.y, this.size, this.size);
+    }
+};
+
+for (var i = 0; i < numAliensRow; i++) {
+    for (var j = 0; j < numAliensColumn; j++) {
+        var alienX = i * 60 + 48;
+        var alienY = j * 54 + 32;
+        aliensArray.push(new Alien(alienX, alienY));
+    }
+}
+
+var Player = function(x,y,image){ //player object
+    this.x = x;
+    this.y = y;
+    this.image = getImage("cute/CharacterBoy");
+    this.size = 75;
+};
+
+Player.prototype.draw = function() {
+    this.x = constrain(this.x, 0, 325);
+    image(this.image, this.x, this.y, this.size, this.size*2);
+};
+
+Player.prototype.left = function(){
+    this.x -= 2;
+};
+
+Player.prototype.right = function(){
+    this.x += 2;
+};
+
+var Laser = function(x,y,color){ //laser object
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    this.hit = false;
+};
+
+Laser.prototype.draw = function() {
+    if (this.hit === false){
+        fill(this.color);
+        rect(this.x, this.y, 10, 30);
+    }
+};
+
+Alien.prototype.checkForLaser = function(playerLaser) {
+    if ((playerLaser.x >= this.x -10 && playerLaser.x <= (this.x +42 )) &&
+        (playerLaser.y >= this.y-7 && playerLaser.y <= (this.y + 51))) {
+        if (this.alive === true){
+            score += 10;
+            this.alive = false;
+            playerLaser.hit = true;
+        }
+    }
+};
+Alien.prototype.alienShootLaser = function(){
+    
+       if(round(((startTime/1000)) + (round(random(2,25)) * this.tic)) < round(millis()/1000) && this.alive){
+            alienLasersArray.push(new Laser(this.x + 25, 100, color(245, 14, 68)));
+            this.tic ++;
+        }
+};
+Player.prototype.checkForLaser = function(alienLaser) {
+    if ((alienLaser.x >= this.x -10 && alienLaser.x <= (this.x +42 )) &&
+        (alienLaser.y >= this.y-7 && alienLaser.y <= (this.y + 51)) && alienLaser.hit === false)  {
+        lives --;
+        alienLaser.hit = true;
+    }
+};
+
+var player1 = new Player(playerX, 279);
+
+var gameScreen = function(){
+    background(3, 3, 3);
+    fill(252, 252, 252);
+    textSize(20);
+    text("Lives: " + lives, 48,25);
+    text("Score: " + score, 140, 25);
+    for (var i = 0; i < aliensArray.length; i++) {
+        aliensArray[i].draw();
+    }
+    player1.draw();
+    if(keyCode === LEFT && keyIsPressed){
+        player1.left();
+        playerX = player1.x;
+    }
+    if(keyCode === RIGHT && keyIsPressed){
+        player1.right();
+        playerX = player1.x;
+    }
+    if(key.code === 32 && keyIsPressed){ 
+        playerLasersArray.push(new Laser(playerX + 25, 250, color(24, 247, 13)));
+    }
+    for (var i = 0; i <aliensArray.length; i++){
+        aliensArray[i].alienShootLaser();
+    }
+    for (var i = 0; i < alienLasersArray.length; i++){
+        alienLasersArray[i].draw();
+        for (var j = 0; j < 1; j++){
+            player1.checkForLaser(alienLasersArray[i]);
+        }
+        alienLasersArray[i].y += 2;
+    }
+    
+    for (var i = 0; i < playerLasersArray.length; i++){
+        playerLasersArray[i].draw();
+        for (var j = 0; j < aliensArray.length; j++){
+            aliensArray[j].checkForLaser(playerLasersArray[i]);
+        }
+        playerLasersArray[i].y -= 2;
+    }
+    /*
+    println(round(millis()/1000));
+    fill(255, 255, 255);
+    text(round(startTime/1000), 100, 200);
+    */
+};
+
+draw = function() {
+    if (currentScene === 0){
+        splashScreen();
+    } else if (currentScene === 1){
+        gameScreen();
+    }
+    if (aliensArray.length === score/10  || lives < 1){
+        currentScene = 2;
+    }
+    if(currentScene === 2){
+        endScreen();
+    }
+};
