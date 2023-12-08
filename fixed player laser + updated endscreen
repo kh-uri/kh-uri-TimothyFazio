@@ -184,6 +184,7 @@ var endScreen = function(){
     fill(255, 255, 255);
     textSize(30);
     text("Your score is: " + score, 197,132);
+
 };
 
 var Alien = function(x,y){ //alien object
